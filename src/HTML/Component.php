@@ -4,6 +4,7 @@ namespace HTML;
 
 abstract class Component {
 	public $__props__ = [];
+	public static $__instance_index__ = -1;
 
 	public function __construct(
 		string|array $props = [],
@@ -13,6 +14,8 @@ abstract class Component {
 		} elseif (is_array($props)) {
 			$this->__props__ = $props;
 		}
+
+		static::$__instance_index__++;
 
 		ob_start();
 	}
@@ -34,7 +37,7 @@ abstract class Component {
 		$this->__props__[$name] = $value;
 	}
 
-	private function _render(
+	final private function _render(
 		bool $return,
 	) {
 		ob_start();
