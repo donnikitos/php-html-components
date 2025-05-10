@@ -16,25 +16,4 @@ class Utils {
 
 		return $val;
 	}
-
-	static public function forward_props(
-		Component $class,
-		...$props,
-	) {
-		foreach ($props as $name) {
-			if (key_exists($name, $class->__props__)) {
-				print($name . '="' . $class->__props__[$name] . '"');
-			}
-		}
-	}
-
-	static public function string_array(
-		string $input,
-		$separator = ',',
-	) {
-		return array_map(
-			fn($item) => trim($item),
-			explode($separator, $input),
-		);
-	}
 }
