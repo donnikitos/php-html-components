@@ -3,7 +3,7 @@
 namespace HTML;
 
 class Utils {
-	static function save_output(
+	static function encode_output(
 		$input,
 	) {
 		$val = $input;

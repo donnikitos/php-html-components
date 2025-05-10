@@ -24,7 +24,7 @@ abstract class Component {
 		$val = $this->__props__[$name];
 
 		if ($name !== 'children') {
-			$val = htmlspecialchars($val);
+			$val = Utils::encode_output($val);
 		}
 
 		return $val;
