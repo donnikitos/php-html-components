@@ -4,7 +4,7 @@ namespace HTML;
 
 abstract class Component {
 	public $__props__ = [];
-	public static $__instance_index__ = -1;
+	private static $__instance_counts__ = [];
 
 	public function __construct(
 		string|array $props = [],
@@ -15,7 +15,10 @@ abstract class Component {
 			$this->__props__ = $props;
 		}
 
-		static::$__instance_index__++;
+		if (!isset(static::$__instance_counts__[static::class])) {
+			static::$__instance_counts__[static::class] = -1;
+		}
+		static::$__instance_counts__[static::class]++;
 
 		ob_start();
 	}
@@ -70,5 +73,9 @@ abstract class Component {
 		$this->__props__['children'] = ob_get_clean();
 
 		return $this->_render($return);
+	}
+
+	final public static function getInstanceIndex() {
+		return static::$__instance_counts__[static::class] ?? 0;
 	}
 }
