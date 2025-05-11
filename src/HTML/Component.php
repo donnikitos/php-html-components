@@ -47,6 +47,7 @@ abstract class Component {
 		$fallback = $this->render();
 
 		$res = ob_get_clean();
+		$res = trim($res, "\n\r");
 
 		if ($return) {
 			return $res ?: $fallback;
