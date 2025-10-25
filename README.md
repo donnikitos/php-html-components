@@ -60,6 +60,16 @@ class Message extends \HTML\Component {
 <?php $msg->close(); ?>
 ```
 
+### 💡 More convenient component usage
+
+We have written several plugins for Vite.\
+To use these components more convenient follow the guide of the **[vite-plugin-php-components](https://www.npmjs.com/package/vite-plugin-php-components)** plugin.\
+This plugin allows you to use these components as regular HTML elements and rewrites those up on compilation into real PHP calls:
+
+`<component.ButtonComponent class="btn-main"> Button Label </component.ButtonComponent>`\
+👇\
+`<?php $c_234546546 = new \components\ButtonComponent(['class' => 'btn-main']); ?> Button Label <?php $c_234546546->close(); ?>`
+
 ---
 
 ## Alternative usage
