@@ -26,7 +26,7 @@ abstract class Component {
 	public function __get($name) {
 		$val = $this->__props__[$name];
 
-		if ($name !== 'children') {
+		if ($name !== 'children' && is_string($val)) {
 			$val = Utils::encode_output($val);
 		}
 
