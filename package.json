@@ -1,0 +1,16 @@
+{
+	"name": "php-html-components",
+	"module": "index.ts",
+	"type": "module",
+	"private": true,
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"@prettier/plugin-php": "^0.24.0",
+		"prettier": "^3.7.4"
+	}
+}
