@@ -40,7 +40,7 @@ abstract class Component {
 		$this->__props__[$name] = $value;
 	}
 
-	final private function _render(
+	private function _render(
 		bool $return,
 	) {
 		ob_start();
