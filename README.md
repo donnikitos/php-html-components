@@ -1,14 +1,14 @@
 # Intuitive & reusable HTML components in PHP
 
-A React-style component system for PHP – write reusable, class-based UI components with props, children, and safe rendering.
+A practical component system for PHP – write reusable, class-based UI components with props, children, and safe rendering.
 
 ### Features
 
--   Components as PHP classes
--   Props and children
--   Escaped-by-default output
--   Self-closing and paired syntax
--   No templating engine – 100% native PHP
+- Components as PHP classes
+- Props and children
+- Escaped-by-default output
+- Self-closing and paired syntax
+- No templating engine – 100% native PHP
 
 ## Installation
 
@@ -30,24 +30,27 @@ Write components directly using native PHP syntax — similar to how JSX mixes H
 namespace components;
 
 class Message extends \HTML\Component {
-    public function render() {
-        $style = match ($this->variant) {
-            'success' => 'background-color: #e6ffed; color: #2f855a; border: 1px solid #c6f6d5;',
-            'error'   => 'background-color: #ffe6e6; color: #c53030; border: 1px solid #feb2b2;',
-            'info'    => 'background-color: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8;',
-            default   => 'background-color: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0;',
-        };
-?>
+	public function render() {
+		$style = match ($this->variant) {
+			'success'
+				=> 'background-color: #e6ffed; color: #2f855a; border: 1px solid #c6f6d5;',
+			'error'
+				=> 'background-color: #ffe6e6; color: #c53030; border: 1px solid #feb2b2;',
+			'info'
+				=> 'background-color: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8;',
+			default
+				=> 'background-color: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0;',
+		}; ?>
     <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 6px; <?= $style ?>">
         <div style="font-weight: bold; margin-bottom: 0.5rem;">
             <?= ucfirst($this->variant ?? 'Note') ?> 🔔
         </div>
         <div>
-            <?= $this->children; ?>
+            <?= $this->children ?>
         </div>
     </div>
 <?php
-    }
+	}
 }
 ```
 
@@ -98,8 +101,7 @@ Components can either echo directly or return a string for further processing (e
 <?php $msg = new \components\Message(['variant' => 'success']); ?>
     Your profile was updated successfully.<br />
     <a href="/cool">Continue</a>
-<?php
-$html = $msg->close(true); // Returns HTML string instead of echoing
+<?php $html = $msg->close(true); // Returns HTML string instead of echoing
 ?>
 ```
 
@@ -107,8 +109,8 @@ $html = $msg->close(true); // Returns HTML string instead of echoing
 
 ```php
 $html = \components\Message::closed(
-  ['variant' => 'success', 'children' => 'Something went wrong.'],
-  true, // Set last parameter to return as HTML string
+	['variant' => 'success', 'children' => 'Something went wrong.'],
+	true, // Set last parameter to return as HTML string
 );
 ```
 
@@ -116,17 +118,18 @@ $html = \components\Message::closed(
 
 ## Notes
 
--   HTML is written inline using regular PHP – no templating language required
--   `<?= $this->children; ?>` is unescaped inner content, other properties are escaped and can be safely used in the HTML context
--   You can mix control logic, conditions, and loops directly in PHP
+- HTML is written inline using regular PHP – no templating language required
+- `<?= $this->children; ?>` is unescaped inner content, other properties are escaped and can be safely used in the HTML context
+- You can mix control logic, conditions, and loops directly in PHP
 
 #### Props & Escaping
 
-| Access                    | Escaped? | Example                             |
-| ------------------------- | -------- | ----------------------------------- |
-| `$this->foo`              | ✅ Yes   | Safe for direct HTML injection      |
-| `$this->__props__['foo']` | ❌ No    | Use for raw values (e.g. JSON, IDs) |
-| `$this->children`         | ❌ No    | Direct inner content (slot-like)    |
+| Access                              | Escaped? | Example                                                                                                  |
+| ----------------------------------- | -------- | -------------------------------------------------------------------------------------------------------- |
+| `$this->foo`                        | ✅ Yes   | Safe for direct HTML injection                                                                           |
+| `$this->__props__['foo']`           | ❌ No    | Use for raw values (e.g. JSON, IDs)                                                                      |
+| `$this->__props__(['*', '!class'])` | ❌ No    | Use for getting an array of raw values (e.g. to pass to child components) (excludes the `children` prop) |
+| `$this->children`                   | ❌ No    | Direct inner content (slot-like)                                                                         |
 
 > **Note:** Only children is unescaped by default. All other props accessed as $this->prop_name are HTML-escaped for safety.
 
