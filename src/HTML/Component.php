@@ -33,6 +33,12 @@ abstract class Component {
 		return $val;
 	}
 
+	final public function __props__(
+		array|callable $filter
+	) {
+		return Props::get($this, $filter);
+	}
+
 	public function __set(
 		$name,
 		$value,
