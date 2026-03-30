@@ -30,17 +30,17 @@ Write components directly using native PHP syntax — similar to how JSX mixes H
 namespace components;
 
 class Message extends \HTML\Component {
-	public function render() {
-		$style = match ($this->variant) {
-			'success'
-				=> 'background-color: #e6ffed; color: #2f855a; border: 1px solid #c6f6d5;',
-			'error'
-				=> 'background-color: #ffe6e6; color: #c53030; border: 1px solid #feb2b2;',
-			'info'
-				=> 'background-color: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8;',
-			default
-				=> 'background-color: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0;',
-		}; ?>
+  public function render() {
+    $style = match ($this->variant) {
+      'success'
+        => 'background-color: #e6ffed; color: #2f855a; border: 1px solid #c6f6d5;',
+      'error'
+        => 'background-color: #ffe6e6; color: #c53030; border: 1px solid #feb2b2;',
+      'info'
+        => 'background-color: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8;',
+      default
+        => 'background-color: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0;',
+    }; ?>
     <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 6px; <?= $style ?>">
         <div style="font-weight: bold; margin-bottom: 0.5rem;">
             <?= ucfirst($this->variant ?? 'Note') ?> 🔔
@@ -50,7 +50,7 @@ class Message extends \HTML\Component {
         </div>
     </div>
 <?php
-	}
+  }
 }
 ```
 
@@ -69,9 +69,19 @@ We have written several plugins for Vite.\
 To use these components more convenient follow the guide of the **[vite-plugin-php-components](https://www.npmjs.com/package/vite-plugin-php-components)** plugin.\
 This plugin allows you to use these components as regular HTML elements and rewrites those up on compilation into real PHP calls:
 
-`<component.ButtonComponent class="btn-main"> Button Label </component.ButtonComponent>`\
-👇\
-`<?php $c_234546546 = new \components\ButtonComponent(['class' => 'btn-main']); ?> Button Label <?php $c_234546546->close(); ?>`
+```
+<component.ButtonComponent class="btn-main">
+  Button Label
+</component.ButtonComponent>
+```
+
+👇
+
+```
+<?php $c_234546546 = new \components\ButtonComponent(['class' => 'btn-main']); ?>
+  Button Label
+<?php $c_234546546->close(); ?>
+```
 
 ---
 
@@ -109,8 +119,8 @@ Components can either echo directly or return a string for further processing (e
 
 ```php
 $html = \components\Message::closed(
-	['variant' => 'success', 'children' => 'Something went wrong.'],
-	true, // Set last parameter to return as HTML string
+  ['variant' => 'success', 'children' => 'Something went wrong.'],
+  true, // Set last parameter to return as HTML string
 );
 ```
 
@@ -124,14 +134,60 @@ $html = \components\Message::closed(
 
 #### Props & Escaping
 
-| Access                              | Escaped? | Example                                                                                                  |
-| ----------------------------------- | -------- | -------------------------------------------------------------------------------------------------------- |
-| `$this->foo`                        | ✅ Yes   | Safe for direct HTML injection                                                                           |
-| `$this->__props__['foo']`           | ❌ No    | Use for raw values (e.g. JSON, IDs)                                                                      |
-| `$this->__props__(['*', '!class'])` | ❌ No    | Use for getting an array of raw values (e.g. to pass to child components) (excludes the `children` prop) |
-| `$this->children`                   | ❌ No    | Direct inner content (slot-like)                                                                         |
+| Access                                               | Escaped? | Example                                                                                                           |
+| ---------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `$this->foo`                                         | ✅ Yes   | Safe for direct HTML injection                                                                                    |
+| `$this->__props__->safe('foo')`                      | ✅ Yes   | Safe for direct HTML injection                                                                                    |
+| `$this->__props__->__toString()`                     | ✅ Yes   | Formatted and HTML-safe string of attributes, that can be directly injected into the attributes of an element.    |
+| `$this->__props__->foo` or `$this->__props__['foo']` | ❌ No    | Use for raw values (e.g. JSON, IDs)                                                                               |
+| `$this->__props__->filter(['*', '!class'])`          | ❌ No    | Use for getting an iterable array of raw values (e.g. to pass to child components) (excludes the `children` prop) |
+| `$this->__props__->__toUnsafeString()`               | ❌ No    | Formatted and **not** HTML-safe string of attributes, that can be printed into the attributes of a component.     |
+| `[...$this->__props__]`                              | ❌ No    | You can also spread the props into an array - those props are **not** HTML-safe!                                  |
+| `$this->children`                                    | ❌ No    | Direct inner content (slot-like)                                                                                  |
 
 > **Note:** Only children is unescaped by default. All other props accessed as $this->prop_name are HTML-escaped for safety.
+
+#### Utilities
+
+##### Components
+
+- **HTML.Element**
+  A ready-to-use component for rendering dynamic standard HTML elements with declarative props.
+  \
+  Usage:
+
+    ```php
+    <HTML.Element element="button" type="submit" class="container">
+        Click me
+    </HTML.Element>
+    ```
+
+    or
+
+    ```php
+    <?php \HTML\Element::closed(['element' => 'img', 'src' => '/some-pic.jpg']); ?>
+    ```
+
+    Props:
+    - `element`: string (required) – the HTML tag to render (e.g., "div", "section", "button")
+    - other attributes – pass-through attributes/handlers (style, class, data-, aria-, etc.)
+
+    Behavior:
+    - Renders a DOM element matching `element`
+    - Forwards additional props to the underlying element
+    - Keeps semantics and browser behavior of native HTML tags
+
+##### Methods
+
+- **\HTML\Utils::encode_output($input)**
+  Method to escape user-supplied or dynamic text before injecting it into HTML content, preventing XSS vulnerabilities.
+  \
+  Arguments:
+    - `$input`: mixed (required) – the data to escape
+
+    Behavior:
+    - Escapes supplied input
+    - If $input is an array it concatenates all elements to a single string
 
 ---
 
