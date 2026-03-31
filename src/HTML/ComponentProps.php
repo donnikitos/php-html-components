@@ -3,35 +3,35 @@
 namespace HTML;
 
 class ComponentProps implements \ArrayAccess, \IteratorAggregate {
-	private $items = [];
+	private $__items__ = [];
 
 	public function __construct(
 		string|array $props = [],
 	) {
 		if (is_string($props)) {
-			$this->items = json_decode($props, true);
+			$this->__items__ = json_decode($props, true);
 		} elseif (is_array($props)) {
-			$this->items = $props;
+			$this->__items__ = $props;
 		}
 	}
 
 	public function __isset($key) {
-		return isset($this->items[$key]);
+		return isset($this->__items__[$key]);
 	}
 
 	public function __set(
 		string $name,
 		mixed $value,
 	) {
-		$this->items[$name] = $value;
+		$this->__items__[$name] = $value;
 	}
 
 	public function __get($name) {
-		return $this->items[$name];
+		return $this->__items__[$name];
 	}
 
 	public function safe($name) {
-		$val = $this->items[$name];
+		$val = $this->__items__[$name];
 		if (is_string($val)) {
 			$val = Utils::encode_output($val);
 		}
@@ -40,7 +40,7 @@ class ComponentProps implements \ArrayAccess, \IteratorAggregate {
 	}
 
 	public function __unset($key) {
-		unset($this->items[$key]);
+		unset($this->__items__[$key]);
 	}
 
 	public function filter(
@@ -50,7 +50,7 @@ class ComponentProps implements \ArrayAccess, \IteratorAggregate {
 
 		if (is_callable($filter)) {
 			$prop_names = array_filter(
-				array_keys($this->items),
+				array_keys($this->__items__),
 				$filter,
 			);
 		} else {
@@ -69,7 +69,7 @@ class ComponentProps implements \ArrayAccess, \IteratorAggregate {
 			if ($prop_names[0] === '*') {
 				array_shift($prop_names);
 				$prop_names = [
-					...array_keys($this->items),
+					...array_keys($this->__items__),
 					...$prop_names,
 				];
 			}
@@ -80,7 +80,7 @@ class ComponentProps implements \ArrayAccess, \IteratorAggregate {
 		foreach ($prop_names as $name) {
 			if (
 				$name !== 'children' &&
-				key_exists($name, $this->items)
+				key_exists($name, $this->__items__)
 			) {
 				$out[$name] = $this->$name;
 			}
@@ -92,30 +92,30 @@ class ComponentProps implements \ArrayAccess, \IteratorAggregate {
 	/* ArrayAccess */
 	public function offsetSet($offset, $value): void {
 		if (is_null($offset)) {
-			$this->container[] = $value;
+			$this->__items__[] = $value;
 		} else {
-			$this->container[$offset] = $value;
+			$this->__items__[$offset] = $value;
 		}
 	}
 
 	public function offsetExists($offset): bool {
-		return isset($this->container[$offset]);
+		return isset($this->__items__[$offset]);
 	}
 
 	public function offsetUnset($offset): void {
-		unset($this->container[$offset]);
+		unset($this->__items__[$offset]);
 	}
 
 	public function offsetGet($offset): mixed {
-		return isset($this->container[$offset]) ? $this->container[$offset] : null;
+		return isset($this->__items__[$offset]) ? $this->__items__[$offset] : null;
 	}
 
 	/* Data acquisition */
 	function __toString() {
 		$out = array_map(
 			fn($name, $value) => Utils::encode_output($name) . '="' . Utils::encode_output($value)  . '"',
-			array_keys($this->items),
-			array_values($this->items),
+			array_keys($this->__items__),
+			array_values($this->__items__),
 		);
 
 		$out = implode(' ', $out);
@@ -126,8 +126,8 @@ class ComponentProps implements \ArrayAccess, \IteratorAggregate {
 	function __toUnsafeString() {
 		$out = array_map(
 			fn($name, $value) => $name . '="' . $value . '"',
-			array_keys($this->items),
-			array_values($this->items),
+			array_keys($this->__items__),
+			array_values($this->__items__),
 		);
 
 		$out = implode(' ', $out);
@@ -136,6 +136,6 @@ class ComponentProps implements \ArrayAccess, \IteratorAggregate {
 	}
 
 	public function getIterator(): \Traversable {
-		return new \ArrayIterator($this->items);
+		return new \ArrayIterator($this->__items__);
 	}
 }
